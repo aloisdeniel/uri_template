@@ -2,15 +2,22 @@ import 'package:uri_template/uri_template.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('A group of tests', () {
-    Awesome awesome;
+  group('Build an uri', () {
+    UriTemplate template;
 
     setUp(() {
-      awesome = Awesome();
+      template =
+          'album' / req<int>('id') / 'photos' & opt<String>('theme', 'dark');
     });
 
-    test('First Test', () {
-      expect(awesome.isAwesome, isTrue);
+    test('Valid', () {
+      final uri = template.build(
+        {
+          'id': 7,
+          'theme': 'light',
+        },
+      );
+      expect('album/7/photos?theme=light' == uri, isTrue);
     });
   });
 }
