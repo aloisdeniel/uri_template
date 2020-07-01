@@ -69,7 +69,7 @@ class UriTemplate {
     for (var i = 0; i < query.length; i++) {
       final definition = query[i];
       final name = definition.name;
-      final value = arguments[name];
+      final value = arguments[name] ?? definition.defaultValue;
       if (value != null) {
         assert(value.runtimeType == definition.valueType,
             'Optional argument "$name" has invalid type : ${value.runtimeType}, expected ${definition.valueType}');
@@ -163,6 +163,13 @@ class UriTemplate {
             error: QueryParsingError(name, e),
           );
         }
+      }
+    }
+
+    // Adding missing default values.
+    for (var q in query) {
+      if (!arguments.containsKey(q.name) && q.defaultValue != null) {
+        arguments[q.name] = q.defaultValue;
       }
     }
 

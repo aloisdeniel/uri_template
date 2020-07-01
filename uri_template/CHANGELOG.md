@@ -1,3 +1,7 @@
+## 0.7.1
+
+- Fixed missing default value.
+
 ## 0.7.0
 
 - Updated query type operator.
