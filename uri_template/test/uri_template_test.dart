@@ -7,8 +7,8 @@ void main() {
 
     setUp(() {
       template = 'album' / 'id'(int) / 'photos' &
-          'theme'.q<String>('dark') &
-          'date'.q<DateTime>();
+          'theme'<String>('dark') &
+          'date'<DateTime>();
     });
 
     test('Valid', () {

@@ -7,8 +7,8 @@ void main() {
   );
 
   final template = 'album' / 'id'(int) / 'photos' &
-      'theme'.q<String>('dark') &
-      'date'.q<DateTime>();
+      'theme'<String>('dark') &
+      'date'<DateTime>();
 
   print('Templates: $template');
 

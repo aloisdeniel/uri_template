@@ -12,7 +12,7 @@ dependencies:
 
 ```dart
 final template =
-    'album' / 'id'(int) / 'photos' & 'theme'.q<String>('dark');
+    'album' / 'id'(int) / 'photos' & 'theme'<String>('dark');
 
 final uri = template.build(
   {

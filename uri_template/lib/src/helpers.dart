@@ -1,10 +1,15 @@
 import '../uri_typed_template.dart';
 
 extension ArgumentStringExtensions on String {
-  DynamicSegment call(Type type) => DynamicSegment(this, type);
+  dynamic call<T>([T value]) {
+    if ((T == Type || T == dynamic) && value != null) {
+      return DynamicSegment(this, value as Type);
+    }
 
-  QueryParameter<T> q<T>([T defaultValue]) => QueryParameter<T>(
-        this,
-        defaultValue: defaultValue,
-      );
+    return QueryParameter(
+      this,
+      T,
+      defaultValue: value,
+    );
+  }
 }

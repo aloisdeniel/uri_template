@@ -187,7 +187,7 @@ class UriTemplate {
       return copyWith(
         query: [
           ...query,
-          QueryParameter<String>(other),
+          QueryParameter(other, String),
         ],
       );
     }
@@ -315,12 +315,13 @@ extension UriTemplateStringExtensions on String {
   UriTemplate operator /(dynamic other) => StaticSegment(this) / other;
 }
 
-class QueryParameter<T> {
+class QueryParameter {
   final String name;
-  final T defaultValue;
-  Type get valueType => T;
+  final dynamic defaultValue;
+  final Type valueType;
   const QueryParameter(
-    this.name, {
+    this.name,
+    this.valueType, {
     this.defaultValue,
   });
 
@@ -339,7 +340,7 @@ class QueryParameter<T> {
       return UriTemplate(
         query: [
           this,
-          QueryParameter<String>(other),
+          QueryParameter(other, String),
         ],
       );
     }
@@ -349,7 +350,7 @@ class QueryParameter<T> {
 
   @override
   String toString() {
-    return '$name=$defaultValue<$T>';
+    return '$name=$defaultValue<$valueType>';
   }
 }
 
