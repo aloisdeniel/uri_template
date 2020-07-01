@@ -1,8 +1,7 @@
 import 'package:uri_typed_template/uri_typed_template.dart';
 
 void main() {
-  final template =
-      'album' / 'id'.req<int>() / 'photos' & 'theme'.opt<String>('dark');
+  final template = 'album' / 'id'(int) / 'photos' & 'theme'.q<String>('dark');
 
   print('Templates: $template');
 

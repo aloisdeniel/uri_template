@@ -6,9 +6,9 @@ void main() {
     (value) => DateTime.fromMicrosecondsSinceEpoch(int.parse(value)),
   );
 
-  final template = 'album' / 'id'.req<int>() / 'photos' &
-      'theme'.opt<String>('dark') &
-      'date'.opt<DateTime>();
+  final template = 'album' / 'id'(int) / 'photos' &
+      'theme'.q<String>('dark') &
+      'date'.q<DateTime>();
 
   print('Templates: $template');
 

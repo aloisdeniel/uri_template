@@ -6,9 +6,9 @@ void main() {
     UriTemplate template;
 
     setUp(() {
-      template = 'album' / 'id'.req<int>() / 'photos' &
-          'theme'.opt<String>('dark') &
-          'date'.opt<DateTime>();
+      template = 'album' / 'id'(int) / 'photos' &
+          'theme'.q<String>('dark') &
+          'date'.q<DateTime>();
     });
 
     test('Valid', () {

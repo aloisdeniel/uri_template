@@ -302,13 +302,13 @@ class StaticSegment extends Segment {
   String toString() => value;
 }
 
-class DynamicSegment<T> extends Segment {
+class DynamicSegment extends Segment {
   final String name;
-  Type get valueType => T;
-  const DynamicSegment(this.name);
+  final Type valueType;
+  const DynamicSegment(this.name, this.valueType);
 
   @override
-  String toString() => ':$name<$T>';
+  String toString() => ':$name<$valueType>';
 }
 
 extension UriTemplateStringExtensions on String {

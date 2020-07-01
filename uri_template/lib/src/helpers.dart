@@ -1,9 +1,9 @@
-import '../uri_template.dart';
+import '../uri_typed_template.dart';
 
 extension ArgumentStringExtensions on String {
-  DynamicSegment<T> req<T>() => DynamicSegment<T>(this);
+  DynamicSegment call(Type type) => DynamicSegment(this, type);
 
-  QueryParameter<T> opt<T>([T defaultValue]) => QueryParameter<T>(
+  QueryParameter<T> q<T>([T defaultValue]) => QueryParameter<T>(
         this,
         defaultValue: defaultValue,
       );
