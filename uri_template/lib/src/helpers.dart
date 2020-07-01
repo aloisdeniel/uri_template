@@ -1,8 +1,10 @@
 import '../uri_template.dart';
 
-DynamicSegment<T> req<T>(String name) => DynamicSegment<T>(name);
+extension ArgumentStringExtensions on String {
+  DynamicSegment<T> req<T>() => DynamicSegment<T>(this);
 
-QueryParameter<T> opt<T>(String name, [T defaultValue]) => QueryParameter<T>(
-      name,
-      defaultValue: defaultValue,
-    );
+  QueryParameter<T> opt<T>([T defaultValue]) => QueryParameter<T>(
+        this,
+        defaultValue: defaultValue,
+      );
+}

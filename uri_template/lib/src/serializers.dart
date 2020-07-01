@@ -1,22 +1,29 @@
-class ArgumentSerializerRegistry {
-  static final ArgumentSerializerRegistry instance =
-      ArgumentSerializerRegistry();
+class UriArgumentSerializers {
+  static final UriArgumentSerializers instance = UriArgumentSerializers();
 
-  final Map<Type, ArgumentSerializer> serializers =
-      <Type, ArgumentSerializer>{};
+  final Map<Type, UriArgumentSerializer> serializers =
+      <Type, UriArgumentSerializer>{};
 
-  ArgumentSerializerRegistry() {
-    serializers[String] = const StringArgumentSerializer();
-    serializers[int] = const IntArgumentSerializer();
-    serializers[double] = const DoubleArgumentSerializer();
-    serializers[bool] = const BoolArgumentSerializer();
+  UriArgumentSerializers() {
+    addSerializer<String>(const StringArgumentSerializer());
+    addSerializer<int>(const IntArgumentSerializer());
+    addSerializer<double>(const DoubleArgumentSerializer());
+    addSerializer<bool>(const BoolArgumentSerializer());
   }
 
-  void add<T>(ArgumentSerializer<T> serializer) {
+  void addSerializer<T>(UriArgumentSerializer<T> serializer) {
+    assert(serializer != null);
     serializers[T] = serializer;
   }
 
-  ArgumentSerializer getSerializer(Type type) {
+  void add<T>(
+    SerializeArgument<T> serialize,
+    DeserializeArgument<T> deserialize,
+  ) {
+    addSerializer<T>(_ArgumentSerializer<T>(serialize, deserialize));
+  }
+
+  UriArgumentSerializer getSerializer(Type type) {
     final result = serializers[type];
     assert(result != null, 'No serializer found for type $type');
     return result;
@@ -36,13 +43,30 @@ class ArgumentSerializerRegistry {
   }
 }
 
-abstract class ArgumentSerializer<T> {
-  const ArgumentSerializer();
+abstract class UriArgumentSerializer<T> {
+  const UriArgumentSerializer();
   String serialize(T value);
   T deserialize(String value);
 }
 
-class StringArgumentSerializer extends ArgumentSerializer<String> {
+typedef SerializeArgument<T> = String Function(T value);
+typedef DeserializeArgument<T> = T Function(String value);
+
+class _ArgumentSerializer<T> extends UriArgumentSerializer<T> {
+  final SerializeArgument<T> _serialize;
+  final DeserializeArgument<T> _deserialize;
+  const _ArgumentSerializer(this._serialize, this._deserialize)
+      : assert(_serialize != null),
+        assert(_deserialize != null);
+
+  @override
+  String serialize(T value) => _serialize(value);
+
+  @override
+  T deserialize(String value) => _deserialize(value);
+}
+
+class StringArgumentSerializer extends UriArgumentSerializer<String> {
   const StringArgumentSerializer();
 
   @override
@@ -52,7 +76,7 @@ class StringArgumentSerializer extends ArgumentSerializer<String> {
   String serialize(String value) => value;
 }
 
-class IntArgumentSerializer extends ArgumentSerializer<int> {
+class IntArgumentSerializer extends UriArgumentSerializer<int> {
   const IntArgumentSerializer();
 
   @override
@@ -62,7 +86,7 @@ class IntArgumentSerializer extends ArgumentSerializer<int> {
   String serialize(int value) => value?.toString();
 }
 
-class DoubleArgumentSerializer extends ArgumentSerializer<double> {
+class DoubleArgumentSerializer extends UriArgumentSerializer<double> {
   const DoubleArgumentSerializer();
 
   @override
@@ -73,7 +97,7 @@ class DoubleArgumentSerializer extends ArgumentSerializer<double> {
   String serialize(double value) => value?.toString();
 }
 
-class BoolArgumentSerializer extends ArgumentSerializer<bool> {
+class BoolArgumentSerializer extends UriArgumentSerializer<bool> {
   const BoolArgumentSerializer();
 
   @override

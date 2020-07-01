@@ -1,4 +1,4 @@
-import 'package:uri_template/src/serializers.dart';
+import 'package:uri_typed_template/src/serializers.dart';
 
 import 'match.dart';
 
@@ -6,8 +6,8 @@ import 'match.dart';
 class UriTemplate {
   static const String defaultSeparator = '/';
 
-  /// The serializer registry used to serializer arguments.
-  final ArgumentSerializerRegistry argumentSerializerRegistry;
+  /// The serializers used to serialize arguments.
+  final UriArgumentSerializers argumentSerializers;
 
   /// The separator used between segments.
   final String separator;
@@ -25,7 +25,7 @@ class UriTemplate {
     this.separator = defaultSeparator,
     this.segments = const <Segment>[],
     this.query = const <QueryParameter>[],
-    this.argumentSerializerRegistry,
+    this.argumentSerializers,
   });
 
   /// Build a URI string from the given [arguments].
@@ -38,8 +38,7 @@ class UriTemplate {
     Map<String, dynamic> arguments, {
     String scheme,
   }) {
-    final serializers =
-        argumentSerializerRegistry ?? ArgumentSerializerRegistry.instance;
+    final serializers = argumentSerializers ?? UriArgumentSerializers.instance;
     final buffer = StringBuffer();
 
     /// Leading scheme
@@ -102,8 +101,7 @@ class UriTemplate {
     }
 
     final arguments = <String, dynamic>{};
-    final serializers =
-        argumentSerializerRegistry ?? ArgumentSerializerRegistry.instance;
+    final serializers = argumentSerializers ?? UriArgumentSerializers.instance;
     final splits = value.split('?');
     final segmentSplits =
         splits.isEmpty ? [] : splits[0].split(RegExp(r'[/\\]'));
@@ -175,11 +173,33 @@ class UriTemplate {
   }
 
   /// Append a query parameter.
-  UriTemplate operator &(QueryParameter other) {
-    return copyWith(query: [
-      ...query,
-      other,
-    ]);
+  UriTemplate operator &(dynamic other) {
+    if (other is QueryParameter) {
+      return copyWith(
+        query: [
+          ...query,
+          other,
+        ],
+      );
+    }
+
+    if (other is String) {
+      return copyWith(
+        query: [
+          ...query,
+          QueryParameter<String>(other),
+        ],
+      );
+    }
+    if (other is UriTemplate) {
+      return copyWith(
+        query: [
+          ...query,
+          ...other.query,
+        ],
+      );
+    }
+    throw Error();
   }
 
   /// Append [other] elements to this template.
@@ -188,24 +208,30 @@ class UriTemplate {
   /// a [String].
   UriTemplate operator /(dynamic other) {
     if (other is UriTemplate) {
-      return copyWith(segments: [
-        ...segments,
-        ...other.segments,
-      ]);
+      return copyWith(
+        segments: [
+          ...segments,
+          ...other.segments,
+        ],
+      );
     }
 
     if (other is Segment) {
-      return copyWith(segments: [
-        ...segments,
-        other,
-      ]);
+      return copyWith(
+        segments: [
+          ...segments,
+          other,
+        ],
+      );
     }
 
     if (other is String) {
-      return copyWith(segments: [
-        ...segments,
-        StaticSegment(other),
-      ]);
+      return copyWith(
+        segments: [
+          ...segments,
+          StaticSegment(other),
+        ],
+      );
     }
 
     throw Error();
@@ -223,6 +249,12 @@ class UriTemplate {
         query: query ?? this.query,
         segments: segments ?? this.segments,
       );
+
+  @override
+  String toString() {
+    return segments.join(separator) +
+        (query.isNotEmpty ? '?' + query.join('&') : '');
+  }
 }
 
 abstract class Segment {
@@ -231,26 +263,31 @@ abstract class Segment {
   UriTemplate operator /(dynamic other) {
     if (other is UriTemplate) {
       return UriTemplate(
-          separator: other.separator,
-          query: other.query,
-          segments: [
-            this,
-            ...other.segments,
-          ]);
+        separator: other.separator,
+        query: other.query,
+        segments: [
+          this,
+          ...other.segments,
+        ],
+      );
     }
 
     if (other is Segment) {
-      return UriTemplate(segments: [
-        this,
-        other,
-      ]);
+      return UriTemplate(
+        segments: [
+          this,
+          other,
+        ],
+      );
     }
 
     if (other is String) {
-      return UriTemplate(segments: [
-        this,
-        StaticSegment(other),
-      ]);
+      return UriTemplate(
+        segments: [
+          this,
+          StaticSegment(other),
+        ],
+      );
     }
 
     throw Error();
@@ -260,12 +297,18 @@ abstract class Segment {
 class StaticSegment extends Segment {
   final String value;
   const StaticSegment(this.value);
+
+  @override
+  String toString() => value;
 }
 
 class DynamicSegment<T> extends Segment {
   final String name;
   Type get valueType => T;
   const DynamicSegment(this.name);
+
+  @override
+  String toString() => ':$name<$T>';
 }
 
 extension UriTemplateStringExtensions on String {
@@ -280,6 +323,34 @@ class QueryParameter<T> {
     this.name, {
     this.defaultValue,
   });
+
+  /// Append a query parameter.
+  UriTemplate operator &(dynamic other) {
+    if (other is QueryParameter) {
+      return UriTemplate(
+        query: [
+          this,
+          other,
+        ],
+      );
+    }
+
+    if (other is String) {
+      return UriTemplate(
+        query: [
+          this,
+          QueryParameter<String>(other),
+        ],
+      );
+    }
+
+    throw Error();
+  }
+
+  @override
+  String toString() {
+    return '$name=$defaultValue<$T>';
+  }
 }
 
 class SegmentParsingError extends Error {

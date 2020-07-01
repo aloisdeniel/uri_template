@@ -1,13 +1,13 @@
-name: uri_template
-description: A starting point for Dart libraries or applications.
-# version: 1.0.0
-# homepage: https://www.example.com
+name: uri_typed_template
+description: Build and parse URIs with simple declarations based on Dart extensions.
+version: 0.5.0
+homepage: https://github.com/aloisdeniel/uri_template
 
 environment:
-  sdk: '>=2.8.1 <3.0.0'
+  sdk: '>=2.6.0 <3.0.0'
 
 dependencies:
-  meta:
+  meta: ^1.1.8
 
 dev_dependencies:
   pedantic: ^1.9.0

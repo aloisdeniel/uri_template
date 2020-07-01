@@ -17,6 +17,9 @@ class UriMatch {
   })  : isSuccess = false,
         arguments = const <String, dynamic>{};
 
+  /// Get an argument value
+  dynamic operator [](String name) => arguments[name];
+
   @override
   String toString() {
     return 'UriMatch($isSuccess)' +

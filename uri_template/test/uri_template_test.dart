@@ -1,4 +1,4 @@
-import 'package:uri_template/uri_template.dart';
+import 'package:uri_typed_template/uri_typed_template.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -6,8 +6,9 @@ void main() {
     UriTemplate template;
 
     setUp(() {
-      template =
-          'album' / req<int>('id') / 'photos' & opt<String>('theme', 'dark');
+      template = 'album' / 'id'.req<int>() / 'photos' &
+          'theme'.opt<String>('dark') &
+          'date'.opt<DateTime>();
     });
 
     test('Valid', () {

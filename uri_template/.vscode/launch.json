@@ -5,8 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Dart",
+            "name": "Main",
             "program": "example/main.dart",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "Quickstart",
+            "program": "example/quickstart.dart",
             "request": "launch",
             "type": "dart"
         }

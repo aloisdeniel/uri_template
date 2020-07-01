@@ -1,22 +1,33 @@
-A library for Dart developers.
+Build and parse URIs with simple declarations based on Dart extensions.
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+## Install
 
-## Usage
+```yaml
+# pubspec.yaml
+dependencies:
+  uri_template:
+```
 
-A simple usage example:
+## Quickstart
 
 ```dart
-import 'package:uri_template/uri_template.dart';
+final template =
+    'album' / 'id'.req<int>() / 'photos' & 'theme'.opt<String>('dark');
 
-main() {
-  var awesome = new Awesome();
+final uri = template.build(
+  {
+    'id': 7,
+    'theme': 'light',
+  },
+); // "album/7/photos?theme=light"
+
+final match = template.match('album/7/photos?theme=light');
+if(match.isSuccess) {
+  int id = match['id']; // 7
+  String theme = match['theme']; // "light"
 }
 ```
 
-## Features and bugs
+## Roadmap
 
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: http://example.com/issues/replaceme
+* Template equality & comparer

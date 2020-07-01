@@ -1,14 +1,8 @@
 import 'package:uri_typed_template/uri_typed_template.dart';
 
 void main() {
-  UriArgumentSerializers.instance.add<DateTime>(
-    (value) => value.microsecondsSinceEpoch.toString(),
-    (value) => DateTime.fromMicrosecondsSinceEpoch(int.parse(value)),
-  );
-
-  final template = 'album' / 'id'.req<int>() / 'photos' &
-      'theme'.opt<String>('dark') &
-      'date'.opt<DateTime>();
+  final template =
+      'album' / 'id'.req<int>() / 'photos' & 'theme'.opt<String>('dark');
 
   print('Templates: $template');
 
@@ -16,7 +10,6 @@ void main() {
     {
       'id': 7,
       'theme': 'light',
-      'date': DateTime.now(),
     },
   );
   print('Uri: $uri');
