@@ -1,6 +1,6 @@
 name: uri_typed_template
 description: Build and parse URIs with simple declarations based on Dart extensions.
-version: 0.5.0
+version: 0.6.0
 homepage: https://github.com/aloisdeniel/uri_template
 
 environment:
